@@ -16,7 +16,7 @@ app.add_middleware(
 )
 
 # 모델 로드
-model = joblib.load("output/storeguard_rf_model.joblib")
+model = joblib.load("storeguard_rf_model.joblib")
 
 class StoreInput(BaseModel):
     region: str
