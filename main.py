@@ -1,11 +1,15 @@
 # main.py
 from fastapi import FastAPI
-from pydantic import BaseModel
-import joblib
-import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # CORS (로컬 HTML에서 호출할 수 있게 허용)
 app.add_middleware(
