@@ -1,6 +1,8 @@
-# main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import joblib
+import pandas as pd
 
 app = FastAPI()
 
@@ -11,15 +13,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# CORS (로컬 HTML에서 호출할 수 있게 허용)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],   # 개발용이라 * 허용
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# 모델 로드
 model = joblib.load("storeguard_rf_model.joblib")
 
 class StoreInput(BaseModel):
@@ -41,7 +34,6 @@ def health():
 
 @app.post("/predict")
 def predict(input: StoreInput):
-    # 파생 변수 계산
     rent_to_sales_ratio = input.rent_monthly / max(input.expected_sales, 1) * 100
 
     df = pd.DataFrame([{
@@ -62,7 +54,6 @@ def predict(input: StoreInput):
     proba = float(model.predict_proba(df)[0, 1])
     risk_score = int(round(proba * 100))
 
-    # 등급 규칙
     if risk_score < 20:
         grade = "A"
     elif risk_score < 35:
