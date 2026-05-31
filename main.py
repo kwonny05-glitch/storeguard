@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
 import pandas as pd
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -13,46 +13,47 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = joblib.load("storeguard_rf_model.joblib")
+model = joblib.load("output/storeguard_rf_model.joblib")
 
-class StoreInput(BaseModel):
-    region: str
-    category: str
-    daily_foot_traffic: int
-    competitors: int
-    vacancy_rate: float
-    trend_index: int
-    rent_monthly: float
-    expected_sales: float
-    equity_ratio: float
-    experience_level: int
-    franchise_scale: int
+class RestaurantInput(BaseModel):
+    city: str
+    cuisine_type: str
+    average_meal_price: float
+    seating_capacity: int
+    years_in_business: int
+    google_rating: float
+    social_media_followers: int
+    weekend_reservations: int
+    staff_count: int
+    delivery_service: str
+    marketing_budget: float
+    health_inspection_score: float
+    annual_revenue: float
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
 @app.post("/predict")
-def predict(input: StoreInput):
-    rent_to_sales_ratio = input.rent_monthly / max(input.expected_sales, 1) * 100
-
+def predict(input: RestaurantInput):
     df = pd.DataFrame([{
-        "region": input.region,
-        "category": input.category,
-        "daily_foot_traffic": input.daily_foot_traffic,
-        "competitors": input.competitors,
-        "vacancy_rate": input.vacancy_rate,
-        "trend_index": input.trend_index,
-        "rent_monthly": input.rent_monthly,
-        "expected_sales": input.expected_sales,
-        "equity_ratio": input.equity_ratio,
-        "experience_level": input.experience_level,
-        "franchise_scale": input.franchise_scale,
-        "rent_to_sales_ratio": rent_to_sales_ratio
+        "City": input.city,
+        "Cuisine_Type": input.cuisine_type,
+        "Average_Meal_Price": input.average_meal_price,
+        "Seating_Capacity": input.seating_capacity,
+        "Years_in_Business": input.years_in_business,
+        "Google_Rating": input.google_rating,
+        "Social_Media_Followers": input.social_media_followers,
+        "Weekend_Reservations": input.weekend_reservations,
+        "Staff_Count": input.staff_count,
+        "Delivery_Service": input.delivery_service,
+        "Marketing_Budget": input.marketing_budget,
+        "Health_Inspection_Score": input.health_inspection_score,
+        "Annual_Revenue": input.annual_revenue
     }])
 
     proba = float(model.predict_proba(df)[0, 1])
-    risk_score = int(round(proba * 100))
+    risk_score = int(round((1 - proba) * 100))  # 성공확률 → 실패리스크로 변환
 
     if risk_score < 20:
         grade = "A"
@@ -69,6 +70,6 @@ def predict(input: StoreInput):
 
     return {
         "risk_score": risk_score,
-        "prob_1y_closure": proba,
+        "prob_1y_closure": round(1 - proba, 3),
         "grade": grade
     }
