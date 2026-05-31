@@ -9,16 +9,14 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 model = joblib.load("storeguard_rf_model.joblib")
 
-CITY_MAP = {"Chicago": 0, "Houston": 1, "Los Angeles": 2, "New York": 3, "San Francisco": 4}
 CUISINE_MAP = {"American": 0, "Chinese": 1, "Indian": 2, "Italian": 3, "Japanese": 4, "Mexican": 5, "Vegan": 6}
 
 class RestaurantInput(BaseModel):
-    city: str
     cuisine_type: str
     average_meal_price: float
     seating_capacity: int
     staff_count: int
-    delivery_service: str   # "Yes" or "No"
+    delivery_service: str
     marketing_budget: float
 
 @app.get("/health")
@@ -33,7 +31,6 @@ def predict(input: RestaurantInput):
         input.staff_count,
         input.marketing_budget,
         1 if input.delivery_service == "Yes" else 0,
-        CITY_MAP.get(input.city, 0),
         CUISINE_MAP.get(input.cuisine_type, 0)
     ]])
 
