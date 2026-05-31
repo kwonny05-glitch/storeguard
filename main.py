@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-model = joblib.load("output/storeguard_rf_model.joblib")
+model = joblib.load("storeguard_rf_model.joblib")
 
 CITY_MAP = {"Chicago": 0, "Houston": 1, "Los Angeles": 2, "New York": 3, "San Francisco": 4}
 CUISINE_MAP = {"American": 0, "Chinese": 1, "Indian": 2, "Italian": 3, "Japanese": 4, "Mexican": 5, "Vegan": 6}
