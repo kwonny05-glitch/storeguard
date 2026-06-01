@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StoreGuard — 자영업 폐업 리스크 예측</title>
+<title>StoreGuard — Restaurant Closure Risk Prediction</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
@@ -40,14 +40,8 @@ header{background:var(--surface);border-bottom:1px solid var(--border);position:
 .hero{max-width:1000px;margin:0 auto;padding:56px 24px 36px;text-align:center}
 .hero-eyebrow{font-size:.75rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);margin-bottom:14px}
 .hero h1{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15;margin-bottom:14px}
-.hero p {
-  font-size: .95rem;
-  color: var(--text-muted);
-  max-width: 480px;
-  margin: 0 auto 28px;
-  line-height: 1.7;
-  word-break: keep-all;
-}
+.hero p{font-size:.95rem;color:var(--text-muted);max-width:520px;margin:0 auto 10px;line-height:1.7}
+.hero-note{font-size:.8rem;color:var(--text-faint);margin-bottom:28px;background:var(--surface-2);display:inline-block;padding:5px 14px;border-radius:99px}
 .hero-stats{display:flex;justify-content:center;gap:36px;flex-wrap:wrap}
 .stat-val{font-size:1.4rem;font-weight:700;color:var(--primary)}
 .stat-label{font-size:.72rem;color:var(--text-faint);margin-top:2px}
@@ -90,8 +84,6 @@ input::placeholder{color:var(--text-faint)}
 .grade-chip{display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;width:50px;height:50px;border-radius:50%;font-family:var(--font-display)}
 .result-summary{font-size:.9rem;font-weight:600;text-align:center;margin-bottom:6px}
 .result-msg{text-align:center;font-size:.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:18px}
-
-/* 맞춤 조언 카드 */
 .advice-section{margin-top:16px}
 .advice-title{font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
 .advice-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:8px;font-size:.83rem;line-height:1.55}
@@ -102,7 +94,6 @@ input::placeholder{color:var(--text-faint)}
 [data-theme="dark"] .advice-item.good{background:#0a1f0a;border-color:#3a7a3a;color:#80d080}
 [data-theme="dark"] .advice-item.info{background:#0a0f2a;border-color:#3a50a0;color:#90a8f0}
 .advice-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
-
 .factor-title{font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;margin-top:16px}
 .factor-row{margin-bottom:8px}
 .factor-label{font-size:.78rem;color:var(--text-muted);margin-bottom:3px;display:flex;justify-content:space-between}
@@ -128,19 +119,20 @@ footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;fo
     </a>
     <div style="display:flex;align-items:center;gap:10px">
       <span class="badge-live">● LIVE</span>
-      <button class="theme-btn" onclick="toggleTheme()">🌙 다크</button>
+      <button class="theme-btn" onclick="toggleTheme()">🌙 Dark</button>
     </div>
   </div>
 </header>
 
 <section class="hero">
   <div class="hero-eyebrow">AI-Powered Risk Analysis</div>
-  <h1>외식업 창업 전,<br>폐업 리스크를 미리 점검하세요</h1>
-  <p>창업 계획 정보 6가지만 입력하면, AI가 폐업 가능성을 분석해 드립니다.</p>
+  <h1>Planning to open a restaurant abroad?<br>Check your closure risk first.</h1>
+  <p>Enter 6 key details about your overseas food service business plan, and our AI model will assess your closure risk in real time.</p>
+  <div class="hero-note">📍 Trained on U.S. restaurant data · Inputs in USD</div>
   <div class="hero-stats">
-    <div class="stat"><div class="stat-val">1,000+</div><div class="stat-label">학습 데이터</div></div>
-    <div class="stat"><div class="stat-val">82.0%</div><div class="stat-label">모델 정확도</div></div>
-    <div class="stat"><div class="stat-val">6</div><div class="stat-label">입력 변수</div></div>
+    <div class="stat"><div class="stat-val">1,000+</div><div class="stat-label">Training Records</div></div>
+    <div class="stat"><div class="stat-val">82.0%</div><div class="stat-label">Model Accuracy</div></div>
+    <div class="stat"><div class="stat-val">6</div><div class="stat-label">Input Variables</div></div>
   </div>
 </section>
 
@@ -148,68 +140,68 @@ footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;fo
   <div class="card">
     <div class="card-title">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      창업 정보 입력
+      Business Plan Input
     </div>
-    <p class="card-subtitle">창업 전 계획 단계에서 파악 가능한 정보만 입력합니다.</p>
+    <p class="card-subtitle">Enter information you can determine before opening. All monetary values in USD ($).</p>
     <form id="predictForm">
       <div class="form-grid">
         <div class="form-group full">
-          <label for="cuisine">업종</label>
+          <label for="cuisine">Cuisine Type</label>
           <select id="cuisine" required>
-            <option value="">선택하세요</option>
-            <option value="American">미국식 (American)</option>
-            <option value="Chinese">중식 (Chinese)</option>
-            <option value="Indian">인도식 (Indian)</option>
-            <option value="Italian">이탈리안 (Italian)</option>
-            <option value="Japanese">일식 (Japanese)</option>
-            <option value="Mexican">멕시칸 (Mexican)</option>
-            <option value="Vegan">비건 (Vegan)</option>
+            <option value="">Select cuisine</option>
+            <option value="American">American</option>
+            <option value="Chinese">Chinese</option>
+            <option value="Indian">Indian</option>
+            <option value="Italian">Italian</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Mexican">Mexican</option>
+            <option value="Vegan">Vegan</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="price">1인 평균 가격</label>
+          <label for="price">Avg. Meal Price (per person)</label>
           <div class="input-wrap">
-            <span class="input-prefix">₩</span>
-            <input type="number" id="price" class="has-prefix" min="1000" step="1000" placeholder="15,000" required>
+            <span class="input-prefix">$</span>
+            <input type="number" id="price" class="has-prefix" min="1" max="200" placeholder="25" required>
           </div>
-          <span class="input-hint">1인 기준 평균 메뉴 가격</span>
+          <span class="input-hint">e.g. $25 for a casual diner</span>
         </div>
         <div class="form-group">
-          <label for="seats">좌석 수</label>
+          <label for="seats">Seating Capacity</label>
           <div class="input-wrap">
             <input type="number" id="seats" min="1" max="500" placeholder="50" required>
-            <span class="input-suffix">석</span>
+            <span class="input-suffix">seats</span>
           </div>
-          <span class="input-hint">홀 좌석 총 개수</span>
+          <span class="input-hint">Total seats in dining area</span>
         </div>
         <div class="form-group">
-          <label for="staff">초기 직원 수</label>
+          <label for="staff">Staff Count</label>
           <div class="input-wrap">
             <input type="number" id="staff" min="1" max="100" placeholder="8" required>
-            <span class="input-suffix">명</span>
+            <span class="input-suffix">people</span>
           </div>
-          <span class="input-hint">초기 채용 계획 인원</span>
+          <span class="input-hint">Planned number of employees</span>
         </div>
         <div class="form-group">
-          <label for="budget">월 마케팅 예산</label>
+          <label for="budget">Monthly Marketing Budget</label>
           <div class="input-wrap">
-            <span class="input-prefix">₩</span>
-            <input type="number" id="budget" class="has-prefix" min="0" step="10000" placeholder="500,000" required>
+            <span class="input-prefix">$</span>
+            <input type="number" id="budget" class="has-prefix" min="0" placeholder="3,000" required>
           </div>
-          <span class="input-hint">SNS 광고 등 월 마케팅 비용</span>
+          <span class="input-hint">e.g. $3,000/mo for ads & promotion</span>
         </div>
         <div class="form-group full">
-          <label>배달 서비스 운영 여부</label>
+          <label>Delivery Service</label>
           <div class="toggle-group">
             <input type="radio" name="delivery" id="del_yes" value="Yes">
-            <label for="del_yes">🛵 배달 운영</label>
+            <label for="del_yes">🛵 Offer Delivery</label>
             <input type="radio" name="delivery" id="del_no" value="No" checked>
-            <label for="del_no">🏠 매장 전용</label>
+            <label for="del_no">🏠 Dine-in Only</label>
           </div>
         </div>
       </div>
       <button class="btn-predict" type="submit" id="submitBtn">
-        <span id="btnText">폐업 리스크 분석하기</span>
+        <span id="btnText">Analyze Closure Risk</span>
         <div class="spinner" id="spinner"></div>
       </button>
       <div class="error-msg" id="errorMsg"></div>
@@ -220,12 +212,12 @@ footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;fo
     <div class="card">
       <div id="resultEmpty" class="result-empty">
         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
-        <p>왼쪽 정보를 입력하고<br><strong>분석 버튼</strong>을 눌러주세요.<br><br>창업 전 폐업 리스크를<br>AI가 분석해 드립니다.</p>
+        <p>Fill in your business plan<br>and click <strong>Analyze</strong>.<br><br>Our AI will assess your<br>closure risk instantly.</p>
       </div>
       <div class="score-display" id="scoreDisplay">
         <div class="card-title" style="margin-bottom:14px">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          분석 결과
+          Analysis Result
         </div>
         <div class="score-ring-wrap">
           <div class="score-circle" id="scoreCircle">
@@ -235,22 +227,18 @@ footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;fo
         </div>
         <div class="grade-badge">
           <div class="grade-chip" id="gradeChip">-</div>
-          <div style="font-size:.75rem;color:var(--text-faint);margin-top:5px">리스크 등급</div>
+          <div style="font-size:.75rem;color:var(--text-faint);margin-top:5px">Risk Grade</div>
         </div>
         <div class="result-summary" id="resultSummary"></div>
         <p class="result-msg" id="resultMsg"></p>
-
-        <!-- 맞춤 조언 -->
         <div class="advice-section">
-          <div class="advice-title">💡 맞춤 개선 조언</div>
+          <div class="advice-title">💡 Personalized Recommendations</div>
           <div id="adviceList"></div>
         </div>
-
-        <div class="factor-title">입력값 요약</div>
+        <div class="factor-title">Input Summary</div>
         <div id="factorBars"></div>
-
         <button class="btn-predict" style="margin-top:18px;background:var(--surface-2);color:var(--text);border:1.5px solid var(--border)" onclick="resetForm()">
-          다시 분석하기
+          Analyze Again
         </button>
       </div>
     </div>
@@ -258,18 +246,17 @@ footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;fo
 </div>
 
 <footer>
-  StoreGuard — 자영업 폐업 리스크 예측 &nbsp;·&nbsp; Random Forest &nbsp;·&nbsp; FastAPI + GitHub Pages
+  StoreGuard — Overseas Restaurant Closure Risk Prediction &nbsp;·&nbsp; Random Forest &nbsp;·&nbsp; FastAPI + GitHub Pages
 </footer>
 
 <script>
 const API = 'https://storeguard.onrender.com';
-const KRW_TO_USD = 1/1350;
 
 function toggleTheme(){
   const html=document.documentElement;
   const isDark=html.getAttribute('data-theme')==='dark';
   html.setAttribute('data-theme',isDark?'light':'dark');
-  document.querySelector('.theme-btn').textContent=isDark?'🌙 다크':'☀️ 라이트';
+  document.querySelector('.theme-btn').textContent=isDark?'🌙 Dark':'☀️ Light';
 }
 
 document.getElementById('predictForm').addEventListener('submit',async(e)=>{
@@ -285,18 +272,18 @@ document.getElementById('predictForm').addEventListener('submit',async(e)=>{
   spinner.style.display='block';
   errMsg.style.display='none';
 
-  const priceKrw=parseFloat(document.getElementById('price').value);
-  const budgetKrw=parseFloat(document.getElementById('budget').value);
+  const price=parseFloat(document.getElementById('price').value);
+  const budget=parseFloat(document.getElementById('budget').value);
   const seats=parseInt(document.getElementById('seats').value);
   const staff=parseInt(document.getElementById('staff').value);
   const cuisine=document.getElementById('cuisine').value;
 
   const payload={
     cuisine_type:cuisine,
-    average_meal_price:parseFloat((priceKrw*KRW_TO_USD).toFixed(2)),
+    average_meal_price:price,
     seating_capacity:seats,
     staff_count:staff,
-    marketing_budget:parseFloat((budgetKrw*KRW_TO_USD).toFixed(2)),
+    marketing_budget:budget,
     delivery_service:delivery
   };
 
@@ -304,9 +291,9 @@ document.getElementById('predictForm').addEventListener('submit',async(e)=>{
     const res=await fetch(`${API}/predict`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if(!res.ok)throw new Error();
     const data=await res.json();
-    showResult(data,{priceKrw,budgetKrw,seats,staff,delivery,cuisine});
+    showResult(data,{price,budget,seats,staff,delivery,cuisine});
   }catch(err){
-    errMsg.textContent='⚠️ 서버 연결 실패. Render 무료 플랜은 첫 요청 시 50초 정도 걸릴 수 있습니다. 잠시 후 다시 시도해주세요.';
+    errMsg.textContent='⚠️ Connection failed. The server may be starting up (Render free tier takes ~50s on first request). Please try again shortly.';
     errMsg.style.display='block';
   }finally{
     btn.disabled=false;
@@ -315,67 +302,30 @@ document.getElementById('predictForm').addEventListener('submit',async(e)=>{
   }
 });
 
-function generateAdvice(inputs, risk){
-  const {priceKrw, budgetKrw, seats, staff, delivery, cuisine} = inputs;
-  const advices = [];
-
-  // 마케팅 예산
-  if(budgetKrw < 200000){
-    advices.push({type:'warn', icon:'📢', text:'월 마케팅 예산이 매우 낮습니다. SNS 광고, 블로그 리뷰 등 초기 홍보에 최소 월 20~50만 원 투자를 권장합니다.'});
-  } else if(budgetKrw >= 1000000){
-    advices.push({type:'good', icon:'✅', text:'마케팅 예산이 충분합니다. 타겟 고객층에 맞는 채널(인스타그램, 네이버 플레이스 등)에 집중하세요.'});
-  }
-
-  // 배달 서비스
-  if(delivery === 'No' && seats < 30){
-    advices.push({type:'warn', icon:'🛵', text:'좌석이 적은 소규모 매장은 배달 서비스 운영 시 매출 안정성을 높일 수 있습니다. 배민·쿠팡이츠 입점을 검토해보세요.'});
-  } else if(delivery === 'Yes'){
-    advices.push({type:'good', icon:'✅', text:'배달 서비스 운영은 매출 다각화에 긍정적입니다. 포장 용기 비용과 배달 수수료를 가격 책정에 반영하세요.'});
-  }
-
-  // 직원 수 대비 좌석 수
-  const seatPerStaff = seats / staff;
-  if(seatPerStaff > 20){
-    advices.push({type:'warn', icon:'👥', text:`직원 1인당 좌석이 ${Math.round(seatPerStaff)}석으로 많습니다. 피크 타임 서비스 품질 저하로 이어질 수 있으니 인원 보강을 고려하세요.`});
-  } else if(seatPerStaff < 5 && staff > 5){
-    advices.push({type:'info', icon:'💰', text:'직원 수 대비 좌석이 적어 인건비 부담이 클 수 있습니다. 홀·주방 역할을 유연하게 조정하세요.'});
-  }
-
-  // 가격대
-  if(priceKrw < 8000){
-    advices.push({type:'warn', icon:'💵', text:'1인 평균 가격이 낮습니다. 식재료·임대료 상승을 고려한 적정 마진 확보를 위해 가격 전략을 재검토하세요.'});
-  } else if(priceKrw > 40000){
-    advices.push({type:'info', icon:'⭐', text:'프리미엄 가격대입니다. 인테리어, 서비스 품질, 브랜딩에 충분한 투자가 필요하며 재방문율 관리가 중요합니다.'});
-  }
-
-  // 업종별 조언
-  if(cuisine === 'Vegan'){
-    advices.push({type:'info', icon:'🌱', text:'비건 업종은 성장 트렌드이지만 타겟 고객층이 좁습니다. 비건 커뮤니티 마케팅과 SNS 채널 운영에 집중하세요.'});
-  } else if(cuisine === 'Japanese' || cuisine === 'Italian'){
-    advices.push({type:'info', icon:'🍜', text:'해당 업종은 식재료 수급이 중요합니다. 안정적인 공급망 확보와 메뉴 원가율 관리에 주의하세요.'});
-  }
-
-  // 리스크 높을 때 공통 조언
-  if(risk >= 50){
-    advices.push({type:'warn', icon:'⚠️', text:'전반적인 리스크가 높습니다. 창업 전 상권 분석과 손익분기점(BEP) 계산을 반드시 검토하세요.'});
-  }
-
-  // 모든 조건 양호하면 긍정 메시지
-  if(advices.length === 0 || advices.every(a=>a.type==='good')){
-    advices.push({type:'good', icon:'🎉', text:'전반적으로 안정적인 창업 계획입니다. 오픈 초기 3개월 운영 자금을 충분히 확보해두세요.'});
-  }
-
-  return advices.slice(0,4); // 최대 4개
+function generateAdvice(inputs,risk){
+  const {price,budget,seats,staff,delivery,cuisine}=inputs;
+  const advices=[];
+  if(budget<2000) advices.push({type:'warn',icon:'📢',text:'Marketing budget is low. In the U.S. market, investing at least $2,000–$5,000/month in early promotion is recommended to build awareness.'});
+  else if(budget>=8000) advices.push({type:'good',icon:'✅',text:'Strong marketing budget. Focus on the right channels — Google Ads, Yelp, and Instagram are typically the most effective for food service.'});
+  if(delivery==='No'&&seats<30) advices.push({type:'warn',icon:'🛵',text:'Small dine-in only venues face higher revenue uncertainty. Offering delivery via DoorDash or Uber Eats can significantly diversify your income stream.'});
+  else if(delivery==='Yes') advices.push({type:'good',icon:'✅',text:'Delivery service adds valuable revenue diversification. Make sure to account for platform commissions (15–30%) in your pricing.'});
+  const seatPerStaff=seats/staff;
+  if(seatPerStaff>20) advices.push({type:'warn',icon:'👥',text:`At ${Math.round(seatPerStaff)} seats per staff member, service quality may suffer during peak hours. Consider adding front-of-house staff.`});
+  else if(seatPerStaff<5&&staff>5) advices.push({type:'info',icon:'💰',text:'Your staffing ratio is high relative to seating. Labor costs may strain profitability — consider flexible scheduling or cross-training staff.'});
+  if(price<12) advices.push({type:'warn',icon:'💵',text:'Low price point may make it difficult to cover U.S. operating costs (rent, labor, food cost). Review your unit economics carefully.'});
+  else if(price>40) advices.push({type:'info',icon:'⭐',text:'Premium pricing requires strong branding, interior design, and service quality. Customer retention and online reputation management are critical.'});
+  if(cuisine==='Vegan') advices.push({type:'info',icon:'🌱',text:'Vegan dining is a growing niche in the U.S. Target health-conscious communities and leverage social media marketing to reach your audience.'});
+  if(risk>=50) advices.push({type:'warn',icon:'⚠️',text:'Overall risk is elevated. Before proceeding, conduct a thorough break-even analysis and ensure you have sufficient runway (6–12 months of operating costs).'});
+  if(advices.length===0||advices.every(a=>a.type==='good')) advices.push({type:'good',icon:'🎉',text:'Your plan looks solid overall. Make sure you have sufficient opening capital and a contingency fund for the first 3 months.'});
+  return advices.slice(0,4);
 }
 
-function showResult(data, inputs){
+function showResult(data,inputs){
   document.getElementById('resultEmpty').style.display='none';
   document.getElementById('scoreDisplay').classList.add('show');
-
   const risk=data.risk_score;
   const grade=data.grade;
   document.getElementById('scoreNum').textContent=risk+'%';
-
   let color,bg;
   if(risk<20){color='#437a22';bg='#eef6e8';}
   else if(risk<35){color='#4f98a3';bg='#e6f2f2';}
@@ -383,54 +333,30 @@ function showResult(data, inputs){
   else if(risk<65){color='#e67e22';bg='#fdf5ee';}
   else if(risk<80){color='#c0392b';bg='#fdf0ee';}
   else{color='#8e0000';bg='#fce8e8';}
-
   const circle=document.getElementById('scoreCircle');
-  circle.style.borderColor=color;
-  circle.style.background=bg;
+  circle.style.borderColor=color;circle.style.background=bg;
   document.getElementById('scoreNum').style.color=color;
-
   const chip=document.getElementById('gradeChip');
-  chip.textContent=grade;
-  chip.style.background=bg;
-  chip.style.color=color;
-
-  const summaries={
-    'A':'매우 안정적인 창업 계획','B':'안정적인 편','C':'보통 수준의 리스크',
-    'D':'주의가 필요한 계획','E':'재검토 권장','F':'창업 재고 필요'
-  };
+  chip.textContent=grade;chip.style.background=bg;chip.style.color=color;
+  const summaries={'A':'Very low risk — strong plan','B':'Low risk — mostly solid','C':'Moderate risk — review key areas','D':'Elevated risk — reconsider key factors','E':'High risk — major revision needed','F':'Critical risk — seek expert advice'};
   document.getElementById('resultSummary').textContent=summaries[grade]||'';
   document.getElementById('resultSummary').style.color=color;
-
-  const msgs={
-    'A':'현재 계획대로라면 생존 가능성이 높습니다.',
-    'B':'몇 가지 요소를 보완하면 더 안정적인 운영이 가능합니다.',
-    'C':'마케팅, 가격, 운영 효율을 중심으로 계획을 점검하세요.',
-    'D':'핵심 리스크 요인을 파악하고 창업 계획을 보완하세요.',
-    'E':'전반적인 창업 계획을 재검토할 필요가 있습니다.',
-    'F':'전문가 상담 후 창업 여부를 신중히 결정하세요.'
-  };
+  const msgs={'A':'Your plan looks strong. Proceed with confidence and monitor key metrics closely.','B':'A few areas could be strengthened to improve your odds further.','C':'Some factors are working against you. Focus on marketing and operational efficiency.','D':'Key risk factors identified. Review your pricing strategy, staffing, and marketing plan.','E':'Multiple high-risk signals detected. A comprehensive review of your business plan is recommended.','F':'Significant risk across multiple dimensions. Consulting a business advisor is strongly recommended.'};
   document.getElementById('resultMsg').textContent=msgs[grade]||'';
-
-  // 맞춤 조언 렌더링
-  const advices=generateAdvice(inputs, risk);
-  document.getElementById('adviceList').innerHTML=advices.map(a=>
-    `<div class="advice-item ${a.type}"><span class="advice-icon">${a.icon}</span><span>${a.text}</span></div>`
-  ).join('');
-
-  // 입력값 요약 바
-  const {priceKrw,budgetKrw,seats,staff}=inputs;
+  const advices=generateAdvice(inputs,risk);
+  document.getElementById('adviceList').innerHTML=advices.map(a=>`<div class="advice-item ${a.type}"><span class="advice-icon">${a.icon}</span><span>${a.text}</span></div>`).join('');
+  const {price,budget,seats,staff}=inputs;
   const factors=[
-    {label:'마케팅 예산',val:Math.min(budgetKrw/5000000*100,100),display:'₩'+budgetKrw.toLocaleString()},
-    {label:'좌석 규모',val:Math.min(seats/150*100,100),display:seats+'석'},
-    {label:'직원 수',val:Math.min(staff/30*100,100),display:staff+'명'},
-    {label:'가격대',val:Math.min(priceKrw/50000*100,100),display:'₩'+priceKrw.toLocaleString()},
+    {label:'Marketing Budget',val:Math.min(budget/15000*100,100),display:'$'+budget.toLocaleString()},
+    {label:'Seating Capacity',val:Math.min(seats/150*100,100),display:seats+' seats'},
+    {label:'Staff Count',val:Math.min(staff/30*100,100),display:staff+' people'},
+    {label:'Meal Price',val:Math.min(price/50*100,100),display:'$'+price},
   ];
   document.getElementById('factorBars').innerHTML=factors.map(f=>`
     <div class="factor-row">
       <div class="factor-label"><span>${f.label}</span><span style="font-size:.72rem">${f.display}</span></div>
       <div class="factor-bar-bg"><div class="factor-bar" style="width:${f.val}%;background:${color}"></div></div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function resetForm(){
