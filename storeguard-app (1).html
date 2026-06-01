@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StoreGuard — 자영업 폐업 리스크 예측</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f6f2;--surface:#ffffff;--surface-2:#f3f0ec;
+  --text:#1a1a1a;--text-muted:#6b6b6b;--text-faint:#aaa;
+  --primary:#01696f;--primary-hover:#0c4e54;
+  --danger:#c0392b;--danger-light:#fdf0ee;
+  --success:#437a22;--success-light:#eef6e8;
+  --border:#ddd;--radius:12px;--radius-sm:8px;
+  --shadow:0 4px 20px rgba(0,0,0,0.08);
+  --font-body:'Inter',sans-serif;
+  --font-display:'Instrument Serif',serif;
+}
+[data-theme="dark"]{
+  --bg:#111110;--surface:#1c1b19;--surface-2:#252422;
+  --text:#e0dfdc;--text-muted:#888;--text-faint:#555;
+  --primary:#4f98a3;--primary-hover:#3a8490;
+  --danger:#e57373;--danger-light:#2a1515;
+  --success:#6daa45;--success-light:#1a2e10;
+  --border:#2e2d2b;--shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-inner{max-width:1000px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:30px;height:30px}
+.logo-text{font-family:var(--font-display);font-size:1.2rem;color:var(--text);font-style:italic}
+.badge-live{background:var(--success-light);color:var(--success);font-size:.7rem;font-weight:600;padding:3px 10px;border-radius:99px}
+.theme-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;color:var(--text-muted);font-size:.82rem;transition:all .2s}
+.theme-btn:hover{border-color:var(--primary);color:var(--primary)}
+.hero{max-width:1000px;margin:0 auto;padding:56px 24px 36px;text-align:center}
+.hero-eyebrow{font-size:.75rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);margin-bottom:14px}
+.hero h1{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15;margin-bottom:14px}
+.hero p{font-size:.95rem;color:var(--text-muted);max-width:480px;margin:0 auto 28px;line-height:1.7}
+.hero-stats{display:flex;justify-content:center;gap:36px;flex-wrap:wrap}
+.stat-val{font-size:1.4rem;font-weight:700;color:var(--primary)}
+.stat-label{font-size:.72rem;color:var(--text-faint);margin-top:2px}
+.main{max-width:1000px;margin:0 auto;padding:0 24px 80px;display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:start}
+@media(max-width:780px){.main{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow)}
+.card-title{font-size:.95rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.card-subtitle{font-size:.83rem;color:var(--text-muted);margin-bottom:22px;line-height:1.6}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:480px){.form-grid{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+label{font-size:.75rem;font-weight:600;color:var(--text-muted);letter-spacing:.3px;text-transform:uppercase}
+.input-wrap{position:relative;display:flex;align-items:center}
+.input-prefix{position:absolute;left:12px;font-size:.9rem;color:var(--text-faint);pointer-events:none;font-weight:500}
+.input-suffix{position:absolute;right:12px;font-size:.78rem;color:var(--text-faint);pointer-events:none}
+input,select{background:var(--surface-2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:.93rem;color:var(--text);font-family:var(--font-body);transition:border .2s,box-shadow .2s;width:100%}
+input.has-prefix{padding-left:28px}
+input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(1,105,111,.1)}
+input::placeholder{color:var(--text-faint)}
+.input-hint{font-size:.72rem;color:var(--text-faint)}
+.toggle-group{display:flex;border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.toggle-group input[type=radio]{display:none}
+.toggle-group label{flex:1;text-align:center;padding:10px;cursor:pointer;font-size:.88rem;font-weight:500;color:var(--text-muted);background:var(--surface-2);transition:all .2s;border:none;letter-spacing:0;text-transform:none}
+.toggle-group input[type=radio]:checked+label{background:var(--primary);color:#fff}
+.btn-predict{width:100%;margin-top:20px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);padding:13px;font-size:.97rem;font-weight:600;cursor:pointer;transition:background .2s,transform .1s;font-family:var(--font-body)}
+.btn-predict:hover{background:var(--primary-hover)}
+.btn-predict:active{transform:scale(.98)}
+.btn-predict:disabled{opacity:.6;cursor:not-allowed}
+.result-panel{position:sticky;top:76px}
+.result-empty{text-align:center;padding:44px 20px;color:var(--text-faint)}
+.result-empty p{font-size:.88rem;line-height:1.7;margin-top:14px}
+.score-display{display:none}
+.score-display.show{display:block}
+.score-ring-wrap{display:flex;justify-content:center;margin:6px 0 16px}
+.score-circle{width:130px;height:130px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:6px solid;transition:all .5s}
+.score-num{font-size:2.2rem;font-weight:700;line-height:1}
+.score-lbl{font-size:.7rem;font-weight:600;letter-spacing:.5px;margin-top:3px;opacity:.75}
+.grade-badge{text-align:center;margin-bottom:14px}
+.grade-chip{display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;width:50px;height:50px;border-radius:50%;font-family:var(--font-display)}
+.result-summary{font-size:.9rem;font-weight:600;text-align:center;margin-bottom:6px}
+.result-msg{text-align:center;font-size:.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:18px}
+
+/* 맞춤 조언 카드 */
+.advice-section{margin-top:16px}
+.advice-title{font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.advice-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:8px;font-size:.83rem;line-height:1.55}
+.advice-item.warn{background:#fffbf0;border:1px solid #f0d080;color:#7a5500}
+.advice-item.good{background:#f0f8f0;border:1px solid #9fcf9f;color:#2d5a2d}
+.advice-item.info{background:#f0f4ff;border:1px solid #99b0e8;color:#2a3a7a}
+[data-theme="dark"] .advice-item.warn{background:#2a1f00;border-color:#7a5500;color:#f0c060}
+[data-theme="dark"] .advice-item.good{background:#0a1f0a;border-color:#3a7a3a;color:#80d080}
+[data-theme="dark"] .advice-item.info{background:#0a0f2a;border-color:#3a50a0;color:#90a8f0}
+.advice-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+
+.factor-title{font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;margin-top:16px}
+.factor-row{margin-bottom:8px}
+.factor-label{font-size:.78rem;color:var(--text-muted);margin-bottom:3px;display:flex;justify-content:space-between}
+.factor-bar-bg{background:var(--surface-2);border-radius:99px;height:5px;overflow:hidden}
+.factor-bar{height:5px;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;font-size:.78rem;color:var(--text-faint)}
+.spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{display:none;background:var(--danger-light);color:var(--danger);border-radius:var(--radius-sm);padding:11px 14px;font-size:.83rem;margin-top:10px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#01696f"/>
+        <path d="M8 13l8-5 8 5v9a1 1 0 01-1 1H9a1 1 0 01-1-1v-9z" stroke="#fff" stroke-width="1.8" fill="none"/>
+        <path d="M13 22v-5h6v5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span class="logo-text">StoreGuard</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="badge-live">● LIVE</span>
+      <button class="theme-btn" onclick="toggleTheme()">🌙 다크</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">AI-Powered Risk Analysis</div>
+  <h1>외식업 창업 전,<br>폐업 리스크를 미리 점검하세요</h1>
+  <p>음식점·카페 창업 계획 정보 6가지만 입력하면, AI가 폐업 가능성을 분석해 드립니다.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-val">1,000+</div><div class="stat-label">학습 데이터</div></div>
+    <div class="stat"><div class="stat-val">82.0%</div><div class="stat-label">모델 정확도</div></div>
+    <div class="stat"><div class="stat-val">6</div><div class="stat-label">입력 변수</div></div>
+  </div>
+</section>
+
+<div class="main">
+  <div class="card">
+    <div class="card-title">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      창업 정보 입력
+    </div>
+    <p class="card-subtitle">창업 전 계획 단계에서 파악 가능한 정보만 입력합니다.</p>
+    <form id="predictForm">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="cuisine">업종</label>
+          <select id="cuisine" required>
+            <option value="">선택하세요</option>
+            <option value="American">미국식 (American)</option>
+            <option value="Chinese">중식 (Chinese)</option>
+            <option value="Indian">인도식 (Indian)</option>
+            <option value="Italian">이탈리안 (Italian)</option>
+            <option value="Japanese">일식 (Japanese)</option>
+            <option value="Mexican">멕시칸 (Mexican)</option>
+            <option value="Vegan">비건 (Vegan)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="price">1인 평균 가격</label>
+          <div class="input-wrap">
+            <span class="input-prefix">₩</span>
+            <input type="number" id="price" class="has-prefix" min="1000" step="1000" placeholder="15,000" required>
+          </div>
+          <span class="input-hint">1인 기준 평균 메뉴 가격</span>
+        </div>
+        <div class="form-group">
+          <label for="seats">좌석 수</label>
+          <div class="input-wrap">
+            <input type="number" id="seats" min="1" max="500" placeholder="50" required>
+            <span class="input-suffix">석</span>
+          </div>
+          <span class="input-hint">홀 좌석 총 개수</span>
+        </div>
+        <div class="form-group">
+          <label for="staff">초기 직원 수</label>
+          <div class="input-wrap">
+            <input type="number" id="staff" min="1" max="100" placeholder="8" required>
+            <span class="input-suffix">명</span>
+          </div>
+          <span class="input-hint">초기 채용 계획 인원</span>
+        </div>
+        <div class="form-group">
+          <label for="budget">월 마케팅 예산</label>
+          <div class="input-wrap">
+            <span class="input-prefix">₩</span>
+            <input type="number" id="budget" class="has-prefix" min="0" step="10000" placeholder="500,000" required>
+          </div>
+          <span class="input-hint">SNS 광고 등 월 마케팅 비용</span>
+        </div>
+        <div class="form-group full">
+          <label>배달 서비스 운영 여부</label>
+          <div class="toggle-group">
+            <input type="radio" name="delivery" id="del_yes" value="Yes">
+            <label for="del_yes">🛵 배달 운영</label>
+            <input type="radio" name="delivery" id="del_no" value="No" checked>
+            <label for="del_no">🏠 매장 전용</label>
+          </div>
+        </div>
+      </div>
+      <button class="btn-predict" type="submit" id="submitBtn">
+        <span id="btnText">폐업 리스크 분석하기</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+      <div class="error-msg" id="errorMsg"></div>
+    </form>
+  </div>
+
+  <div class="result-panel">
+    <div class="card">
+      <div id="resultEmpty" class="result-empty">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+        <p>왼쪽 정보를 입력하고<br><strong>분석 버튼</strong>을 눌러주세요.<br><br>창업 전 폐업 리스크를<br>AI가 분석해 드립니다.</p>
+      </div>
+      <div class="score-display" id="scoreDisplay">
+        <div class="card-title" style="margin-bottom:14px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          분석 결과
+        </div>
+        <div class="score-ring-wrap">
+          <div class="score-circle" id="scoreCircle">
+            <div class="score-num" id="scoreNum">--</div>
+            <div class="score-lbl">RISK SCORE</div>
+          </div>
+        </div>
+        <div class="grade-badge">
+          <div class="grade-chip" id="gradeChip">-</div>
+          <div style="font-size:.75rem;color:var(--text-faint);margin-top:5px">리스크 등급</div>
+        </div>
+        <div class="result-summary" id="resultSummary"></div>
+        <p class="result-msg" id="resultMsg"></p>
+
+        <!-- 맞춤 조언 -->
+        <div class="advice-section">
+          <div class="advice-title">💡 맞춤 개선 조언</div>
+          <div id="adviceList"></div>
+        </div>
+
+        <div class="factor-title">입력값 요약</div>
+        <div id="factorBars"></div>
+
+        <button class="btn-predict" style="margin-top:18px;background:var(--surface-2);color:var(--text);border:1.5px solid var(--border)" onclick="resetForm()">
+          다시 분석하기
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  StoreGuard — 자영업 폐업 리스크 예측 &nbsp;·&nbsp; Random Forest &nbsp;·&nbsp; FastAPI + GitHub Pages
+</footer>
+
+<script>
+const API = 'https://storeguard.onrender.com';
+const KRW_TO_USD = 1/1350;
+
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  document.querySelector('.theme-btn').textContent=isDark?'🌙 다크':'☀️ 라이트';
+}
+
+document.getElementById('predictForm').addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  const btn=document.getElementById('submitBtn');
+  const spinner=document.getElementById('spinner');
+  const btnText=document.getElementById('btnText');
+  const errMsg=document.getElementById('errorMsg');
+  const delivery=document.querySelector('input[name="delivery"]:checked')?.value;
+
+  btn.disabled=true;
+  btnText.style.display='none';
+  spinner.style.display='block';
+  errMsg.style.display='none';
+
+  const priceKrw=parseFloat(document.getElementById('price').value);
+  const budgetKrw=parseFloat(document.getElementById('budget').value);
+  const seats=parseInt(document.getElementById('seats').value);
+  const staff=parseInt(document.getElementById('staff').value);
+  const cuisine=document.getElementById('cuisine').value;
+
+  const payload={
+    cuisine_type:cuisine,
+    average_meal_price:parseFloat((priceKrw*KRW_TO_USD).toFixed(2)),
+    seating_capacity:seats,
+    staff_count:staff,
+    marketing_budget:parseFloat((budgetKrw*KRW_TO_USD).toFixed(2)),
+    delivery_service:delivery
+  };
+
+  try{
+    const res=await fetch(`${API}/predict`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!res.ok)throw new Error();
+    const data=await res.json();
+    showResult(data,{priceKrw,budgetKrw,seats,staff,delivery,cuisine});
+  }catch(err){
+    errMsg.textContent='⚠️ 서버 연결 실패. Render 무료 플랜은 첫 요청 시 50초 정도 걸릴 수 있습니다. 잠시 후 다시 시도해주세요.';
+    errMsg.style.display='block';
+  }finally{
+    btn.disabled=false;
+    btnText.style.display='block';
+    spinner.style.display='none';
+  }
+});
+
+function generateAdvice(inputs, risk){
+  const {priceKrw, budgetKrw, seats, staff, delivery, cuisine} = inputs;
+  const advices = [];
+
+  // 마케팅 예산
+  if(budgetKrw < 200000){
+    advices.push({type:'warn', icon:'📢', text:'월 마케팅 예산이 매우 낮습니다. SNS 광고, 블로그 리뷰 등 초기 홍보에 최소 월 20~50만 원 투자를 권장합니다.'});
+  } else if(budgetKrw >= 1000000){
+    advices.push({type:'good', icon:'✅', text:'마케팅 예산이 충분합니다. 타겟 고객층에 맞는 채널(인스타그램, 네이버 플레이스 등)에 집중하세요.'});
+  }
+
+  // 배달 서비스
+  if(delivery === 'No' && seats < 30){
+    advices.push({type:'warn', icon:'🛵', text:'좌석이 적은 소규모 매장은 배달 서비스 운영 시 매출 안정성을 높일 수 있습니다. 배민·쿠팡이츠 입점을 검토해보세요.'});
+  } else if(delivery === 'Yes'){
+    advices.push({type:'good', icon:'✅', text:'배달 서비스 운영은 매출 다각화에 긍정적입니다. 포장 용기 비용과 배달 수수료를 가격 책정에 반영하세요.'});
+  }
+
+  // 직원 수 대비 좌석 수
+  const seatPerStaff = seats / staff;
+  if(seatPerStaff > 20){
+    advices.push({type:'warn', icon:'👥', text:`직원 1인당 좌석이 ${Math.round(seatPerStaff)}석으로 많습니다. 피크 타임 서비스 품질 저하로 이어질 수 있으니 인원 보강을 고려하세요.`});
+  } else if(seatPerStaff < 5 && staff > 5){
+    advices.push({type:'info', icon:'💰', text:'직원 수 대비 좌석이 적어 인건비 부담이 클 수 있습니다. 홀·주방 역할을 유연하게 조정하세요.'});
+  }
+
+  // 가격대
+  if(priceKrw < 8000){
+    advices.push({type:'warn', icon:'💵', text:'1인 평균 가격이 낮습니다. 식재료·임대료 상승을 고려한 적정 마진 확보를 위해 가격 전략을 재검토하세요.'});
+  } else if(priceKrw > 40000){
+    advices.push({type:'info', icon:'⭐', text:'프리미엄 가격대입니다. 인테리어, 서비스 품질, 브랜딩에 충분한 투자가 필요하며 재방문율 관리가 중요합니다.'});
+  }
+
+  // 업종별 조언
+  if(cuisine === 'Vegan'){
+    advices.push({type:'info', icon:'🌱', text:'비건 업종은 성장 트렌드이지만 타겟 고객층이 좁습니다. 비건 커뮤니티 마케팅과 SNS 채널 운영에 집중하세요.'});
+  } else if(cuisine === 'Japanese' || cuisine === 'Italian'){
+    advices.push({type:'info', icon:'🍜', text:'해당 업종은 식재료 수급이 중요합니다. 안정적인 공급망 확보와 메뉴 원가율 관리에 주의하세요.'});
+  }
+
+  // 리스크 높을 때 공통 조언
+  if(risk >= 50){
+    advices.push({type:'warn', icon:'⚠️', text:'전반적인 리스크가 높습니다. 창업 전 상권 분석과 손익분기점(BEP) 계산을 반드시 검토하세요.'});
+  }
+
+  // 모든 조건 양호하면 긍정 메시지
+  if(advices.length === 0 || advices.every(a=>a.type==='good')){
+    advices.push({type:'good', icon:'🎉', text:'전반적으로 안정적인 창업 계획입니다. 오픈 초기 3개월 운영 자금을 충분히 확보해두세요.'});
+  }
+
+  return advices.slice(0,4); // 최대 4개
+}
+
+function showResult(data, inputs){
+  document.getElementById('resultEmpty').style.display='none';
+  document.getElementById('scoreDisplay').classList.add('show');
+
+  const risk=data.risk_score;
+  const grade=data.grade;
+  document.getElementById('scoreNum').textContent=risk+'%';
+
+  let color,bg;
+  if(risk<20){color='#437a22';bg='#eef6e8';}
+  else if(risk<35){color='#4f98a3';bg='#e6f2f2';}
+  else if(risk<50){color='#d97706';bg='#fef9ee';}
+  else if(risk<65){color='#e67e22';bg='#fdf5ee';}
+  else if(risk<80){color='#c0392b';bg='#fdf0ee';}
+  else{color='#8e0000';bg='#fce8e8';}
+
+  const circle=document.getElementById('scoreCircle');
+  circle.style.borderColor=color;
+  circle.style.background=bg;
+  document.getElementById('scoreNum').style.color=color;
+
+  const chip=document.getElementById('gradeChip');
+  chip.textContent=grade;
+  chip.style.background=bg;
+  chip.style.color=color;
+
+  const summaries={
+    'A':'매우 안정적인 창업 계획','B':'안정적인 편','C':'보통 수준의 리스크',
+    'D':'주의가 필요한 계획','E':'재검토 권장','F':'창업 재고 필요'
+  };
+  document.getElementById('resultSummary').textContent=summaries[grade]||'';
+  document.getElementById('resultSummary').style.color=color;
+
+  const msgs={
+    'A':'현재 계획대로라면 생존 가능성이 높습니다.',
+    'B':'몇 가지 요소를 보완하면 더 안정적인 운영이 가능합니다.',
+    'C':'마케팅, 가격, 운영 효율을 중심으로 계획을 점검하세요.',
+    'D':'핵심 리스크 요인을 파악하고 창업 계획을 보완하세요.',
+    'E':'전반적인 창업 계획을 재검토할 필요가 있습니다.',
+    'F':'전문가 상담 후 창업 여부를 신중히 결정하세요.'
+  };
+  document.getElementById('resultMsg').textContent=msgs[grade]||'';
+
+  // 맞춤 조언 렌더링
+  const advices=generateAdvice(inputs, risk);
+  document.getElementById('adviceList').innerHTML=advices.map(a=>
+    `<div class="advice-item ${a.type}"><span class="advice-icon">${a.icon}</span><span>${a.text}</span></div>`
+  ).join('');
+
+  // 입력값 요약 바
+  const {priceKrw,budgetKrw,seats,staff}=inputs;
+  const factors=[
+    {label:'마케팅 예산',val:Math.min(budgetKrw/5000000*100,100),display:'₩'+budgetKrw.toLocaleString()},
+    {label:'좌석 규모',val:Math.min(seats/150*100,100),display:seats+'석'},
+    {label:'직원 수',val:Math.min(staff/30*100,100),display:staff+'명'},
+    {label:'가격대',val:Math.min(priceKrw/50000*100,100),display:'₩'+priceKrw.toLocaleString()},
+  ];
+  document.getElementById('factorBars').innerHTML=factors.map(f=>`
+    <div class="factor-row">
+      <div class="factor-label"><span>${f.label}</span><span style="font-size:.72rem">${f.display}</span></div>
+      <div class="factor-bar-bg"><div class="factor-bar" style="width:${f.val}%;background:${color}"></div></div>
+    </div>
+  `).join('');
+}
+
+function resetForm(){
+  document.getElementById('predictForm').reset();
+  document.getElementById('resultEmpty').style.display='block';
+  document.getElementById('scoreDisplay').classList.remove('show');
+}
+</script>
+</body>
+</html>
