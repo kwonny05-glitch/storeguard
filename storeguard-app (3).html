@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StoreGuard — Restaurant Closure Risk Prediction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f6f2;--surface:#ffffff;--surface-2:#f3f0ec;
+  --text:#1a1a1a;--text-muted:#6b6b6b;--text-faint:#aaa;
+  --primary:#01696f;--primary-hover:#0c4e54;
+  --danger:#c0392b;--danger-light:#fdf0ee;
+  --success:#437a22;--success-light:#eef6e8;
+  --border:#ddd;--radius:12px;--radius-sm:8px;
+  --shadow:0 4px 20px rgba(0,0,0,0.08);
+  --font-body:'Inter',sans-serif;
+  --font-display:'Instrument Serif',serif;
+}
+[data-theme="dark"]{
+  --bg:#111110;--surface:#1c1b19;--surface-2:#252422;
+  --text:#e0dfdc;--text-muted:#888;--text-faint:#555;
+  --primary:#4f98a3;--primary-hover:#3a8490;
+  --danger:#e57373;--danger-light:#2a1515;
+  --success:#6daa45;--success-light:#1a2e10;
+  --border:#2e2d2b;--shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-inner{max-width:1000px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:30px;height:30px}
+.logo-text{font-family:var(--font-display);font-size:1.2rem;color:var(--text);font-style:italic}
+.badge-live{background:var(--success-light);color:var(--success);font-size:.7rem;font-weight:600;padding:3px 10px;border-radius:99px}
+.theme-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;color:var(--text-muted);font-size:.82rem;transition:all .2s}
+.theme-btn:hover{border-color:var(--primary);color:var(--primary)}
+.hero{max-width:1000px;margin:0 auto;padding:56px 24px 36px;text-align:center}
+.hero-eyebrow{font-size:.75rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);margin-bottom:14px}
+.hero h1{font-family:var(--font-display);font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15;margin-bottom:14px}
+.hero p{font-size:.95rem;color:var(--text-muted);max-width:520px;margin:0 auto 10px;line-height:1.7}
+.hero-note{font-size:.8rem;color:var(--text-faint);margin-bottom:28px;background:var(--surface-2);display:inline-block;padding:5px 14px;border-radius:99px}
+.hero-stats{display:flex;justify-content:center;gap:36px;flex-wrap:wrap}
+.stat-val{font-size:1.4rem;font-weight:700;color:var(--primary)}
+.stat-label{font-size:.72rem;color:var(--text-faint);margin-top:2px}
+.main{max-width:1000px;margin:0 auto;padding:0 24px 80px;display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:start}
+@media(max-width:780px){.main{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow)}
+.card-title{font-size:.95rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.card-subtitle{font-size:.83rem;color:var(--text-muted);margin-bottom:22px;line-height:1.6}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:480px){.form-grid{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+label{font-size:.75rem;font-weight:600;color:var(--text-muted);letter-spacing:.3px;text-transform:uppercase}
+.input-wrap{position:relative;display:flex;align-items:center}
+.input-prefix{position:absolute;left:12px;font-size:.9rem;color:var(--text-faint);pointer-events:none;font-weight:500}
+.input-suffix{position:absolute;right:12px;font-size:.78rem;color:var(--text-faint);pointer-events:none}
+input,select{background:var(--surface-2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:.93rem;color:var(--text);font-family:var(--font-body);transition:border .2s,box-shadow .2s;width:100%}
+input.has-prefix{padding-left:28px}
+input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(1,105,111,.1)}
+input::placeholder{color:var(--text-faint)}
+.input-hint{font-size:.72rem;color:var(--text-faint)}
+.toggle-group{display:flex;border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.toggle-group input[type=radio]{display:none}
+.toggle-group label{flex:1;text-align:center;padding:10px;cursor:pointer;font-size:.88rem;font-weight:500;color:var(--text-muted);background:var(--surface-2);transition:all .2s;border:none;letter-spacing:0;text-transform:none}
+.toggle-group input[type=radio]:checked+label{background:var(--primary);color:#fff}
+.btn-predict{width:100%;margin-top:20px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);padding:13px;font-size:.97rem;font-weight:600;cursor:pointer;transition:background .2s,transform .1s;font-family:var(--font-body)}
+.btn-predict:hover{background:var(--primary-hover)}
+.btn-predict:active{transform:scale(.98)}
+.btn-predict:disabled{opacity:.6;cursor:not-allowed}
+.result-panel{position:sticky;top:76px}
+.result-empty{text-align:center;padding:44px 20px;color:var(--text-faint)}
+.result-empty p{font-size:.88rem;line-height:1.7;margin-top:14px}
+.score-display{display:none}
+.score-display.show{display:block}
+.score-ring-wrap{display:flex;justify-content:center;margin:6px 0 16px}
+.score-circle{width:130px;height:130px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:6px solid;transition:all .5s}
+.score-num{font-size:2.2rem;font-weight:700;line-height:1}
+.score-lbl{font-size:.7rem;font-weight:600;letter-spacing:.5px;margin-top:3px;opacity:.75}
+.grade-badge{text-align:center;margin-bottom:14px}
+.grade-chip{display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;width:50px;height:50px;border-radius:50%;font-family:var(--font-display)}
+.result-summary{font-size:.9rem;font-weight:600;text-align:center;margin-bottom:6px}
+.result-msg{text-align:center;font-size:.85rem;color:var(--text-muted);line-height:1.6;margin-bottom:18px}
+.advice-section{margin-top:16px}
+.advice-title{font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.advice-item{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:8px;font-size:.83rem;line-height:1.55}
+.advice-item.warn{background:#fffbf0;border:1px solid #f0d080;color:#7a5500}
+.advice-item.good{background:#f0f8f0;border:1px solid #9fcf9f;color:#2d5a2d}
+.advice-item.info{background:#f0f4ff;border:1px solid #99b0e8;color:#2a3a7a}
+[data-theme="dark"] .advice-item.warn{background:#2a1f00;border-color:#7a5500;color:#f0c060}
+[data-theme="dark"] .advice-item.good{background:#0a1f0a;border-color:#3a7a3a;color:#80d080}
+[data-theme="dark"] .advice-item.info{background:#0a0f2a;border-color:#3a50a0;color:#90a8f0}
+.advice-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.factor-title{font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;margin-top:16px}
+.factor-row{margin-bottom:8px}
+.factor-label{font-size:.78rem;color:var(--text-muted);margin-bottom:3px;display:flex;justify-content:space-between}
+.factor-bar-bg{background:var(--surface-2);border-radius:99px;height:5px;overflow:hidden}
+.factor-bar{height:5px;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;font-size:.78rem;color:var(--text-faint)}
+.spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{display:none;background:var(--danger-light);color:var(--danger);border-radius:var(--radius-sm);padding:11px 14px;font-size:.83rem;margin-top:10px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#01696f"/>
+        <path d="M8 13l8-5 8 5v9a1 1 0 01-1 1H9a1 1 0 01-1-1v-9z" stroke="#fff" stroke-width="1.8" fill="none"/>
+        <path d="M13 22v-5h6v5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span class="logo-text">StoreGuard</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="badge-live">● LIVE</span>
+      <button class="theme-btn" onclick="toggleTheme()">🌙 Dark</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">AI-Powered Risk Analysis</div>
+  <h1>Planning to open a restaurant abroad?<br>Check your closure risk first.</h1>
+  <p>Enter 6 key details about your overseas food service business plan, and our AI model will assess your closure risk in real time.</p>
+  <div class="hero-note">📍 Trained on U.S. restaurant data · Inputs in USD</div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-val">1,000+</div><div class="stat-label">Training Records</div></div>
+    <div class="stat"><div class="stat-val">82.0%</div><div class="stat-label">Model Accuracy</div></div>
+    <div class="stat"><div class="stat-val">6</div><div class="stat-label">Input Variables</div></div>
+  </div>
+</section>
+
+<div class="main">
+  <div class="card">
+    <div class="card-title">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Business Plan Input
+    </div>
+    <p class="card-subtitle">Enter information you can determine before opening. All monetary values in USD ($).</p>
+    <form id="predictForm">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="cuisine">Cuisine Type</label>
+          <select id="cuisine" required>
+            <option value="">Select cuisine</option>
+            <option value="American">American</option>
+            <option value="Chinese">Chinese</option>
+            <option value="Indian">Indian</option>
+            <option value="Italian">Italian</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Mexican">Mexican</option>
+            <option value="Vegan">Vegan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="price">Avg. Meal Price (per person)</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="price" class="has-prefix" min="1" max="200" placeholder="25" required>
+          </div>
+          <span class="input-hint">e.g. $25 for a casual diner</span>
+        </div>
+        <div class="form-group">
+          <label for="seats">Seating Capacity</label>
+          <div class="input-wrap">
+            <input type="number" id="seats" min="1" max="500" placeholder="50" required>
+            <span class="input-suffix">seats</span>
+          </div>
+          <span class="input-hint">Total seats in dining area</span>
+        </div>
+        <div class="form-group">
+          <label for="staff">Staff Count</label>
+          <div class="input-wrap">
+            <input type="number" id="staff" min="1" max="100" placeholder="8" required>
+            <span class="input-suffix">people</span>
+          </div>
+          <span class="input-hint">Planned number of employees</span>
+        </div>
+        <div class="form-group">
+          <label for="budget">Monthly Marketing Budget</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="budget" class="has-prefix" min="0" placeholder="3,000" required>
+          </div>
+          <span class="input-hint">e.g. $3,000/mo for ads & promotion</span>
+        </div>
+        <div class="form-group full">
+          <label>Delivery Service</label>
+          <div class="toggle-group">
+            <input type="radio" name="delivery" id="del_yes" value="Yes">
+            <label for="del_yes">🛵 Offer Delivery</label>
+            <input type="radio" name="delivery" id="del_no" value="No" checked>
+            <label for="del_no">🏠 Dine-in Only</label>
+          </div>
+        </div>
+      </div>
+      <button class="btn-predict" type="submit" id="submitBtn">
+        <span id="btnText">Analyze Closure Risk</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+      <div class="error-msg" id="errorMsg"></div>
+    </form>
+  </div>
+
+  <div class="result-panel">
+    <div class="card">
+      <div id="resultEmpty" class="result-empty">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+        <p>Fill in your business plan<br>and click <strong>Analyze</strong>.<br><br>Our AI will assess your<br>closure risk instantly.</p>
+      </div>
+      <div class="score-display" id="scoreDisplay">
+        <div class="card-title" style="margin-bottom:14px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Analysis Result
+        </div>
+        <div class="score-ring-wrap">
+          <div class="score-circle" id="scoreCircle">
+            <div class="score-num" id="scoreNum">--</div>
+            <div class="score-lbl">RISK SCORE</div>
+          </div>
+        </div>
+        <div class="grade-badge">
+          <div class="grade-chip" id="gradeChip">-</div>
+          <div style="font-size:.75rem;color:var(--text-faint);margin-top:5px">Risk Grade</div>
+        </div>
+        <div class="result-summary" id="resultSummary"></div>
+        <p class="result-msg" id="resultMsg"></p>
+        <div class="advice-section">
+          <div class="advice-title">💡 Personalized Recommendations</div>
+          <div id="adviceList"></div>
+        </div>
+        <div class="factor-title">Input Summary</div>
+        <div id="factorBars"></div>
+        <button class="btn-predict" style="margin-top:18px;background:var(--surface-2);color:var(--text);border:1.5px solid var(--border)" onclick="resetForm()">
+          Analyze Again
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  StoreGuard — Overseas Restaurant Closure Risk Prediction &nbsp;·&nbsp; Random Forest &nbsp;·&nbsp; FastAPI + GitHub Pages
+</footer>
+
+<script>
+const API = 'https://storeguard.onrender.com';
+
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  document.querySelector('.theme-btn').textContent=isDark?'🌙 Dark':'☀️ Light';
+}
+
+document.getElementById('predictForm').addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  const btn=document.getElementById('submitBtn');
+  const spinner=document.getElementById('spinner');
+  const btnText=document.getElementById('btnText');
+  const errMsg=document.getElementById('errorMsg');
+  const delivery=document.querySelector('input[name="delivery"]:checked')?.value;
+
+  btn.disabled=true;
+  btnText.style.display='none';
+  spinner.style.display='block';
+  errMsg.style.display='none';
+
+  const price=parseFloat(document.getElementById('price').value);
+  const budget=parseFloat(document.getElementById('budget').value);
+  const seats=parseInt(document.getElementById('seats').value);
+  const staff=parseInt(document.getElementById('staff').value);
+  const cuisine=document.getElementById('cuisine').value;
+
+  const payload={
+    cuisine_type:cuisine,
+    average_meal_price:price,
+    seating_capacity:seats,
+    staff_count:staff,
+    marketing_budget:budget,
+    delivery_service:delivery
+  };
+
+  try{
+    const res=await fetch(`${API}/predict`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!res.ok)throw new Error();
+    const data=await res.json();
+    showResult(data,{price,budget,seats,staff,delivery,cuisine});
+  }catch(err){
+    errMsg.textContent='⚠️ Connection failed. The server may be starting up (Render free tier takes ~50s on first request). Please try again shortly.';
+    errMsg.style.display='block';
+  }finally{
+    btn.disabled=false;
+    btnText.style.display='block';
+    spinner.style.display='none';
+  }
+});
+
+function generateAdvice(inputs,risk){
+  const {price,budget,seats,staff,delivery,cuisine}=inputs;
+  const advices=[];
+  if(budget<2000) advices.push({type:'warn',icon:'📢',text:'Marketing budget is low. In the U.S. market, investing at least $2,000–$5,000/month in early promotion is recommended to build awareness.'});
+  else if(budget>=8000) advices.push({type:'good',icon:'✅',text:'Strong marketing budget. Focus on the right channels — Google Ads, Yelp, and Instagram are typically the most effective for food service.'});
+  if(delivery==='No'&&seats<30) advices.push({type:'warn',icon:'🛵',text:'Small dine-in only venues face higher revenue uncertainty. Offering delivery via DoorDash or Uber Eats can significantly diversify your income stream.'});
+  else if(delivery==='Yes') advices.push({type:'good',icon:'✅',text:'Delivery service adds valuable revenue diversification. Make sure to account for platform commissions (15–30%) in your pricing.'});
+  const seatPerStaff=seats/staff;
+  if(seatPerStaff>20) advices.push({type:'warn',icon:'👥',text:`At ${Math.round(seatPerStaff)} seats per staff member, service quality may suffer during peak hours. Consider adding front-of-house staff.`});
+  else if(seatPerStaff<5&&staff>5) advices.push({type:'info',icon:'💰',text:'Your staffing ratio is high relative to seating. Labor costs may strain profitability — consider flexible scheduling or cross-training staff.'});
+  if(price<12) advices.push({type:'warn',icon:'💵',text:'Low price point may make it difficult to cover U.S. operating costs (rent, labor, food cost). Review your unit economics carefully.'});
+  else if(price>40) advices.push({type:'info',icon:'⭐',text:'Premium pricing requires strong branding, interior design, and service quality. Customer retention and online reputation management are critical.'});
+  if(cuisine==='Vegan') advices.push({type:'info',icon:'🌱',text:'Vegan dining is a growing niche in the U.S. Target health-conscious communities and leverage social media marketing to reach your audience.'});
+  if(risk>=50) advices.push({type:'warn',icon:'⚠️',text:'Overall risk is elevated. Before proceeding, conduct a thorough break-even analysis and ensure you have sufficient runway (6–12 months of operating costs).'});
+  if(advices.length===0||advices.every(a=>a.type==='good')) advices.push({type:'good',icon:'🎉',text:'Your plan looks solid overall. Make sure you have sufficient opening capital and a contingency fund for the first 3 months.'});
+  return advices.slice(0,4);
+}
+
+function showResult(data,inputs){
+  document.getElementById('resultEmpty').style.display='none';
+  document.getElementById('scoreDisplay').classList.add('show');
+  const risk=data.risk_score;
+  const grade=data.grade;
+  document.getElementById('scoreNum').textContent=risk+'%';
+  let color,bg;
+  if(risk<20){color='#437a22';bg='#eef6e8';}
+  else if(risk<35){color='#4f98a3';bg='#e6f2f2';}
+  else if(risk<50){color='#d97706';bg='#fef9ee';}
+  else if(risk<65){color='#e67e22';bg='#fdf5ee';}
+  else if(risk<80){color='#c0392b';bg='#fdf0ee';}
+  else{color='#8e0000';bg='#fce8e8';}
+  const circle=document.getElementById('scoreCircle');
+  circle.style.borderColor=color;circle.style.background=bg;
+  document.getElementById('scoreNum').style.color=color;
+  const chip=document.getElementById('gradeChip');
+  chip.textContent=grade;chip.style.background=bg;chip.style.color=color;
+  const summaries={'A':'Very low risk — strong plan','B':'Low risk — mostly solid','C':'Moderate risk — review key areas','D':'Elevated risk — reconsider key factors','E':'High risk — major revision needed','F':'Critical risk — seek expert advice'};
+  document.getElementById('resultSummary').textContent=summaries[grade]||'';
+  document.getElementById('resultSummary').style.color=color;
+  const msgs={'A':'Your plan looks strong. Proceed with confidence and monitor key metrics closely.','B':'A few areas could be strengthened to improve your odds further.','C':'Some factors are working against you. Focus on marketing and operational efficiency.','D':'Key risk factors identified. Review your pricing strategy, staffing, and marketing plan.','E':'Multiple high-risk signals detected. A comprehensive review of your business plan is recommended.','F':'Significant risk across multiple dimensions. Consulting a business advisor is strongly recommended.'};
+  document.getElementById('resultMsg').textContent=msgs[grade]||'';
+  const advices=generateAdvice(inputs,risk);
+  document.getElementById('adviceList').innerHTML=advices.map(a=>`<div class="advice-item ${a.type}"><span class="advice-icon">${a.icon}</span><span>${a.text}</span></div>`).join('');
+  const {price,budget,seats,staff}=inputs;
+  const factors=[
+    {label:'Marketing Budget',val:Math.min(budget/15000*100,100),display:'$'+budget.toLocaleString()},
+    {label:'Seating Capacity',val:Math.min(seats/150*100,100),display:seats+' seats'},
+    {label:'Staff Count',val:Math.min(staff/30*100,100),display:staff+' people'},
+    {label:'Meal Price',val:Math.min(price/50*100,100),display:'$'+price},
+  ];
+  document.getElementById('factorBars').innerHTML=factors.map(f=>`
+    <div class="factor-row">
+      <div class="factor-label"><span>${f.label}</span><span style="font-size:.72rem">${f.display}</span></div>
+      <div class="factor-bar-bg"><div class="factor-bar" style="width:${f.val}%;background:${color}"></div></div>
+    </div>`).join('');
+}
+
+function resetForm(){
+  document.getElementById('predictForm').reset();
+  document.getElementById('resultEmpty').style.display='block';
+  document.getElementById('scoreDisplay').classList.remove('show');
+}
+</script>
+</body>
+</html>
